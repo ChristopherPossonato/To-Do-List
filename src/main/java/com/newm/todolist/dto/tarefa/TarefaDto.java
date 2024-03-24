@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @Builder
@@ -15,7 +17,9 @@ import java.io.Serializable;
 public class TarefaDto implements Serializable {
     private Long id;
     private String titulo;
-    private String detalhes;
+    private String descricao;
+    private Date dataCriacao;
+    private String dataExpiracao;
     private Status status;
 
 }

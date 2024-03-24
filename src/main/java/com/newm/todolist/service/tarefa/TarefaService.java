@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface TarefaService {
     List<TarefaDto> listar();
     Optional<TarefaDto> buscarPorId(Long id);
-    Long salvar(TarefaDto tarefaDto);
+    TarefaDto salvar(TarefaDto tarefaDto);
     Long alterar(TarefaDto tarefaDto);
     void excluir(Long id);
 }

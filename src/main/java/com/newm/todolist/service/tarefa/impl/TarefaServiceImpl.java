@@ -4,14 +4,12 @@ import com.newm.todolist.dataprovider.model.Tarefa;
 import com.newm.todolist.dataprovider.repository.TarefaRepository;
 import com.newm.todolist.dto.tarefa.TarefaDto;
 import com.newm.todolist.service.tarefa.TarefaService;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,25 +21,22 @@ public class TarefaServiceImpl implements TarefaService {
     @Override
     public List<TarefaDto> listar() {
         var list = new ArrayList<TarefaDto>();
-
-        this.tarefaRepository.findAll().forEach(o -> {
+        this.tarefaRepository.findAllByStatusPendente()
+                .forEach(o -> {
             list.add(this.mapper.map(o, TarefaDto.class));
         });
-
         return list.stream()
-                .sorted(Comparator.comparing(TarefaDto::getId))
+                .sorted(Comparator.comparing(TarefaDto::getDataExpiracao))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<TarefaDto> buscarPorId(Long id) {
 
-        var tarefa = tarefaRepository.findById(id).orElse(null);
+        var tarefa = tarefaRepository.getReferenceById(id);
 
         if (tarefa != null) {
-
-            TarefaDto obj = null;
-            obj = mapper.map(tarefa, TarefaDto.class);
+            TarefaDto obj = mapper.map(tarefa, TarefaDto.class);
 
             return Optional.of(obj);
         }else{
@@ -50,28 +45,29 @@ public class TarefaServiceImpl implements TarefaService {
     }
 
     @Override
-    public Long salvar(TarefaDto tarefaDto) {
+    public TarefaDto salvar(TarefaDto tarefaDto) {
         var obj = this.mapper.map(tarefaDto, Tarefa.class);
-
-        var clienteSalvo = tarefaRepository.save(obj);
-
-        return clienteSalvo.getId();
+        var tarefaSalva = tarefaRepository.save(obj);
+        return this.mapper.map(tarefaSalva, TarefaDto.class);
     }
 
     @Override
     public Long alterar(TarefaDto tarefaDto) {
-
         if (tarefaDto.getId() == null) {
             throw new IllegalArgumentException("ID da tarefa não pode ser nulo para atualização");
         }
 
-        var tarefaExistente = mapper.map(tarefaDto, Tarefa.class);
-        tarefaRepository.findById(tarefaExistente.getId()).orElseThrow();
+        var tarefaExistente = tarefaRepository.findById(tarefaDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Tarefa não encontrada"));
 
-        Tarefa clienteAtualizado = tarefaRepository.save(tarefaExistente);
+        // Atualize os campos relevantes da tarefa existente com os valores do DTO
+        mapper.map(tarefaDto, tarefaExistente);
 
-        return clienteAtualizado.getId();
+        Tarefa tarefaAtualizada = tarefaRepository.save(tarefaExistente);
+
+        return tarefaAtualizada.getId();
     }
+
 
 
     @Override

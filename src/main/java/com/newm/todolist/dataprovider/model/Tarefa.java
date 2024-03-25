@@ -31,16 +31,15 @@ public class Tarefa {
     @Column(columnDefinition = "DATE")
     private Date dataCriacao = new Date();
     @Column(columnDefinition = "DATE")
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private String dataExpiracao;
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.PENDENTE;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date dataExpiracao;
+
+    private Boolean status;
 
     @PrePersist
     protected void onCreate() {
         this.dataCriacao = new Date();
         if (this.status == null) {
-            this.status = Status.PENDENTE;
         }
     }
 }

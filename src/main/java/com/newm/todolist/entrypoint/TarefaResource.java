@@ -3,7 +3,6 @@ package com.newm.todolist.entrypoint;
 import com.newm.todolist.dto.tarefa.TarefaDto;
 import com.newm.todolist.entrypoint.model.tarefa.TarefaRequest;
 import com.newm.todolist.entrypoint.model.tarefa.TarefaResponse;
-import com.newm.todolist.entrypoint.model.tarefa.TarefaResponseAll;
 import com.newm.todolist.service.tarefa.TarefaService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,11 +38,11 @@ public class TarefaResource {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Busca tarefa por Id.")
-    public ResponseEntity<TarefaResponseAll> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<TarefaResponse> buscarPorId(@PathVariable Long id) {
         var obj = tarefaService.buscarPorId(id).orElse(null);
 
         if (obj != null) {
-            var ret = this.mapper.map(obj, TarefaResponseAll.class);
+            var ret = this.mapper.map(obj, TarefaResponse.class);
             System.out.println(ret);
             return ResponseEntity.ok(ret);
         }else{
@@ -83,6 +82,7 @@ public class TarefaResource {
         tarefaService.excluir(id);
         return ResponseEntity.noContent().build();
     }
+
 
 
 }

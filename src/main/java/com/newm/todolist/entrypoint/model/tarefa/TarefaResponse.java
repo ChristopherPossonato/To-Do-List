@@ -1,6 +1,6 @@
 package com.newm.todolist.entrypoint.model.tarefa;
 
-import com.newm.todolist.dataprovider.model.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +15,10 @@ import java.util.Date;
 public class TarefaResponse {
     private Long id;
     private String titulo;
-    private String dataExpiracao;
+    private String descricao;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date dataCriacao;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date dataExpiracao;
+    private Boolean status;
 }
